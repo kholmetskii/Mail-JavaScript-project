@@ -33,14 +33,48 @@ function load_mailbox(mailbox) {
 
     // Show the mailbox name
     document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+    // Get mails
+    fetch('/emails/inbox')
+    .then(response => response.json())
+    .then(emails => {
+        emails.forEach(singleEmail => {
+            const newEmail = document.createElement('div');
+            newEmail.innerHTML = `
+                <h5> Subject: ${singleEmail.subject} <h6> From: ${singleEmail.sender} </h6> </h5>
+                <p> Sent: ${singleEmail.timestamp} </p>
+            `;
+            newEmail.addEventListener('click', function() {
+                console.log('This element has been clicked!')
+            });
+            document.querySelector('#emails-view').append(newEmail);
+        })
+
+        console.log(emails);
+    });
 }
 
 function send_email(event) {
     event.preventDefault();
 
-    // Your logic to send the email goes here
-    console.log("Form submitted");
+    // Logic to send the email
+    const recipients = document.querySelector('#compose-recipients').value;
+    const subject = document.querySelector('#compose-subject').value
+    const body =  document.querySelector('#compose-body').value
 
-    // Optionally, load a mailbox after sending
+    fetch('/emails', {
+        method: 'POST',
+        body: JSON.stringify({
+            recipients: recipients,
+            subject: subject,
+            body: body
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        // Print result
+        console.log(result);
+    });
+
     load_mailbox('sent');
 };
