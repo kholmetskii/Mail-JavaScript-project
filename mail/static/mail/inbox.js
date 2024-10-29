@@ -17,6 +17,7 @@ function compose_email() {
 
     // Show compose view and hide other views
     document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#email-view').innerHTML = '';
     document.querySelector('#compose-view').style.display = 'block';
 
     // Clear out composition fields
@@ -29,6 +30,7 @@ function load_mailbox(mailbox) {
 
     // Show the mailbox and hide other views
     document.querySelector('#emails-view').style.display = 'block';
+    document.querySelector('#email-view').innerHTML = '';
     document.querySelector('#compose-view').style.display = 'none';
 
     // Show the mailbox name
@@ -105,10 +107,31 @@ function send_email(event) {
 function view_email(email_id) {
     // This function will handle the email click event
     console.log(`This element has been clicked! Email ID: ${email_id}`);
+
+    document.querySelector('#email-view').innerHTML = '';
+    document.querySelector('#email-view').innerHTML = `<h3>Mail</h3>`;
+
+
     fetch(`/emails/${email_id}`)
     .then(response => response.json())
     .then(email => {
         console.log(email);
+        const newEmail = document.createElement('div');
 
+        const formattedBody = email.body.replace(/\n/g, '<br>');
+
+        newEmail.innerHTML = `
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h5 style="margin: 0;"><b>${email.sender}</b></h5>
+                    <p style="margin: 0;">${email.timestamp}</p>
+                </div>
+                <h6><b>${email.subject}</b></h6>
+                <h6>${formattedBody}</h6>
+            </div>
+        `;
+
+
+        document.querySelector('#email-view').append(newEmail);
     });
 }
