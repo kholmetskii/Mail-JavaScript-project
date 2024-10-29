@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('#compose').addEventListener('click', compose_email);
 
     // Handle form submission
-    document.querySelector('#compose-form').addEventListener('submit', send_email)
+    document.querySelector('#compose-form').addEventListener('submit', send_email);
 
     // By default, load the inbox
     load_mailbox('inbox');
@@ -35,20 +35,44 @@ function load_mailbox(mailbox) {
     document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
     // Get mails
-    fetch('/emails/inbox')
+    fetch(`/emails/${mailbox}`)
     .then(response => response.json())
     .then(emails => {
         emails.forEach(singleEmail => {
             const newEmail = document.createElement('div');
+
+            // Format the email date
+            const emailDate = new Date(singleEmail.timestamp);
+            const currentDate = new Date();
+
+            let formattedEmailDate;
+
+            if (emailDate.toDateString() === currentDate.toDateString()) {
+                // Same day, show time
+                formattedEmailDate = emailDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } else {
+                // Different day, show date
+                formattedEmailDate = emailDate.toLocaleDateString();
+            }
+
+            // Construct the email item content
             newEmail.innerHTML = `
-                <h5> Subject: ${singleEmail.subject} <h6> From: ${singleEmail.sender} </h6> </h5>
-                <p> Sent: ${singleEmail.timestamp} </p>
+                <div style="border-bottom: 1px solid #ddd;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h5 style="margin: 0;"><b>${singleEmail.sender}</b></h5>
+                        <p style="margin: 0;">${formattedEmailDate}</p>
+                    </div>
+                    <h6><b>${singleEmail.subject}</b></h6>
+                    <h6 class="email-body-preview">${singleEmail.body}</h6>
+                </div>
             `;
-            newEmail.addEventListener('click', function() {
-                console.log('This element has been clicked!')
-            });
+
+            // Add event listener using a separate function
+            newEmail.addEventListener('click', () => view_email(singleEmail.id));
+
+            // Append email to the emails-view container
             document.querySelector('#emails-view').append(newEmail);
-        })
+        });
 
         console.log(emails);
     });
@@ -59,8 +83,8 @@ function send_email(event) {
 
     // Logic to send the email
     const recipients = document.querySelector('#compose-recipients').value;
-    const subject = document.querySelector('#compose-subject').value
-    const body =  document.querySelector('#compose-body').value
+    const subject = document.querySelector('#compose-subject').value;
+    const body = document.querySelector('#compose-body').value;
 
     fetch('/emails', {
         method: 'POST',
@@ -74,7 +98,17 @@ function send_email(event) {
     .then(result => {
         // Print result
         console.log(result);
+        load_mailbox('sent');  // After sending, load the "Sent" mailbox
     });
+}
 
-    load_mailbox('sent');
-};
+function view_email(email_id) {
+    // This function will handle the email click event
+    console.log(`This element has been clicked! Email ID: ${email_id}`);
+    fetch(`/emails/${email_id}`)
+    .then(response => response.json())
+    .then(email => {
+        console.log(email);
+
+    });
+}

@@ -11,7 +11,16 @@
     <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
     <hr>
 
-    <div id="emails-view">
+    <div class="row">
+        <div class="col-md-4" style="border-right: 1px solid #ddd;">
+            <div id="emails-view">
+            </div>
+        </div>
+        <div class="col-md-8">
+            <h3> Mail </h3>
+            <div id="email-view">
+            </div>
+        </div>
     </div>
 
     <div id="compose-view">
@@ -33,5 +42,5 @@
 {% endblock %}
 
 {% block script %}
-    <script src="{% static 'mail/inbox.js' %}"></script>
+    <script src="{% static 'mail/inbox.js' %}?v={{ timestamp }}"></script>
 {% endblock %}
