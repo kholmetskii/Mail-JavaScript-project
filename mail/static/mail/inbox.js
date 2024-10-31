@@ -220,8 +220,8 @@ function archive_email(email) {
     })
     .then(() => {
         // Reload the inbox or archive mailbox after archiving
-        setActiveTab(email.archived ? 'inbox' : 'archived');
-        load_mailbox(email.archived ? 'inbox' : 'archive');
+        setActiveTab('inbox');
+        load_mailbox('inbox');
     });
 }
 
