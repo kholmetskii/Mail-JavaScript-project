@@ -19,16 +19,19 @@
         </li>
         <div class="d-flex align-items-center ml-auto" style="margin-left: auto;">
             <div class="mb-0 mr-3">{{ request.user.email }}</div>
-            <a href="{% url 'logout' %}" style="color: #DC3545; text-decoration: none; margin-left: 5px;">Log Out</a>
+            <a href="{% url 'logout' %}" class="logout-link">Log Out</a>
         </div>
     </ul>
 
-    <div class="row">
+    <div class="row" id="mailbox-view">
         <div class="col-md-4">
+            <div id="mailbox-name" style="margin: 10px">
+            </div>
             <div id="email-previews">
             </div>
         </div>
         <div class="col-md-8">
+            <h3 style="margin: 10px">Mail</h3>
             <div id="email-view">
             </div>
         </div>

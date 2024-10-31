@@ -39,8 +39,7 @@ function setActiveTab(tab) {
 
 function compose_email() {
     // Show compose view and hide other views
-    document.querySelector('#email-previews').style.display = 'none';
-    document.querySelector('#email-view').style.display = 'none';
+    document.querySelector('#mailbox-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'block';
 
     // Clear out composition fields
@@ -52,12 +51,15 @@ function compose_email() {
 let selectedEmail = null;
 function load_mailbox(mailbox) {
     // Show the mailbox and hide other views
-    document.querySelector('#email-previews').style.display = 'block';
-    document.querySelector('#email-view').style.display = 'block';
+    document.querySelector('#mailbox-view').style.display = 'flex';
     document.querySelector('#compose-view').style.display = 'none';
 
+    // Clean old emails previews and email view
+    document.querySelector('#email-previews').innerHTML = '';
+    document.querySelector('#email-view').innerHTML = '';
+
     // Show the mailbox name
-    document.querySelector('#email-previews').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+    document.querySelector('#mailbox-name').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
     // Get mails
     fetch(`/emails/${mailbox}`)
@@ -153,7 +155,6 @@ function view_email(email_id) {
     console.log(`This element has been clicked! Email ID: ${email_id}`);
 
     document.querySelector('#email-view').innerHTML = '';
-    document.querySelector('#email-view').innerHTML = `<h3>Mail</h3>`;
 
     fetch(`/emails/${email_id}`, {
         method: 'PUT',
@@ -170,19 +171,52 @@ function view_email(email_id) {
         const formattedBody = email.body.replace(/\n/g, '<br>');
 
         newEmail.innerHTML = `
-            <div>
-                <div class='email-head'>
-                    <h5>From:<b> ${email.sender}</b></h5>
-                    <p>Time of sending: ${email.timestamp}</p>
-                </div>
-                <div class='email-body'>
-                    <h6>Subject: <b>${email.subject}</b></h6>
-                    <h6>${formattedBody}</h6>
-                </div>
+
+            <div class='email-head'>
+                <h5>From:<b> ${email.sender}</b></h5>
+                <p>Time of sending: ${email.timestamp}</p>
+            </div>
+            <div class='email-body'>
+                <h6>Subject: <b>${email.subject}</b></h6>
+                <h6>${formattedBody}</h6>
+            </div>
+
+            <div class='email-options-bar'>
+                <button class='button-icon' id="archive-button">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="10" width="18" height="10" stroke="white" stroke-width="2" />
+                        <rect x="5" y="4" width="14" height="4" fill="white" />
+                    </svg>
+                </button>
+                <button class='button-icon' id="reply-button">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 5L4 12L10 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M20 18C20 14 18 12 12 12H4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
             </div>
         `;
 
-
         document.querySelector('#email-view').append(newEmail);
+
+        // Add event listener for the archive button
+        document.querySelector('#archive-button').addEventListener('click', () => {
+            archive_email(email);
+        });
+    });
+}
+
+function archive_email(email) {
+    fetch(`/emails/${email.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            archived: !email.archived
+        })
+
+    })
+    .then(() => {
+        // Reload the inbox or archive mailbox after archiving
+        setActiveTab(email.archived ? 'inbox' : 'archived');
+        load_mailbox(email.archived ? 'inbox' : 'archive');
     });
 }
