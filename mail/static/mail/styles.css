@@ -26,13 +26,13 @@ body {
     white-space: normal; /* Allows text to wrap */
 }
 
-#email-previews-block {
+#email-previews {
     max-height: 85vh; /* Adjust height as needed */
     overflow-y: auto;  /* Enables vertical scrolling */
     padding: 10px;
 }
 
-#email-previews-block::-webkit-scrollbar {
+#email-previews::-webkit-scrollbar {
     display: none;
 }
 
@@ -40,16 +40,26 @@ body {
     padding: 10px;
 }
 
-
 .email-head {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     border-bottom: 1px solid #ddd;
 }
 
+.email-head-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.email-head-right {
+    font-size: 0.9em;
+    color: #888; /* Optional: Lighter color for the timestamp */
+    text-align: right; /* Aligns timestamp to the right */
+}
+
 .email-body {
-    margin-top: 5px;
+    margin-top: 10px;
 }
 
 #compose-form .form-control {
@@ -158,3 +168,17 @@ body {
     margin-bottom: 5px;
     color: #ffffff;
 }
+
+.nav-tabs .nav-link.active {
+    background-color: #333;
+    color: #007bff;
+}
+
+.nav-tabs .nav-link {
+    border-bottom: none;
+    color: #007bff;
+}
+
+
+
+

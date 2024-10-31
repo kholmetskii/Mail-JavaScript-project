@@ -1,22 +1,45 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // Use buttons to toggle between views
-    document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
-    document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
-    document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-    document.querySelector('#compose').addEventListener('click', compose_email);
+    document.querySelector('#inbox-tab').addEventListener('click', () => {
+        setActiveTab('inbox');
+        load_mailbox('inbox');
+    });
+    document.querySelector('#sent-tab').addEventListener('click', () => {
+        setActiveTab('sent');
+        load_mailbox('sent');
+    });
+    document.querySelector('#archived-tab').addEventListener('click', () => {
+        setActiveTab('archived');
+        load_mailbox('archive');
+    });
+    document.querySelector('#compose-tab').addEventListener('click', () => {
+        setActiveTab('compose');
+        compose_email();
+    });
 
     // Handle form submission
     document.querySelector('#compose-form').addEventListener('submit', send_email);
 
     // By default, load the inbox
+    setActiveTab('inbox');
     load_mailbox('inbox');
 });
 
-function compose_email() {
+// Function to set the active tab
+function setActiveTab(tab) {
+    // Remove 'active' class from all tabs
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
 
+    // Add 'active' class to the current tab
+    document.querySelector(`#${tab}-tab`).classList.add('active');
+}
+
+function compose_email() {
     // Show compose view and hide other views
-    document.querySelector('#email-previews-block').style.display = 'none';
+    document.querySelector('#email-previews').style.display = 'none';
     document.querySelector('#email-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'block';
 
@@ -28,14 +51,13 @@ function compose_email() {
 
 let selectedEmail = null;
 function load_mailbox(mailbox) {
-
     // Show the mailbox and hide other views
-    document.querySelector('#email-previews-block').style.display = 'block';
+    document.querySelector('#email-previews').style.display = 'block';
     document.querySelector('#email-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
 
     // Show the mailbox name
-    document.querySelector('#email-previews-block').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+    document.querySelector('#email-previews').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
     // Get mails
     fetch(`/emails/${mailbox}`)
@@ -94,7 +116,7 @@ function load_mailbox(mailbox) {
             });
 
             // Append email to the emails-view container
-            document.querySelector('#email-previews-block').append(newEmail);
+            document.querySelector('#email-previews').append(newEmail);
         });
 
         console.log(emails);
@@ -121,6 +143,7 @@ function send_email(event) {
     .then(result => {
         // Print result
         console.log(result);
+        setActiveTab('sent');
         load_mailbox('sent');  // After sending, load the "Sent" mailbox
     });
 }

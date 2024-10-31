@@ -3,17 +3,28 @@
 
 {% block body %}
     <h2>{{ request.user.email }}</h2>
-    <div class="top-panel">
-        <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
-        <button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
-        <button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
-        <button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
-        <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
-    </div>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" id="inbox-tab" href="#">Inbox</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="compose-tab" href="#">Compose</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="sent-tab" href="#">Sent</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="archived-tab" href="#">Archived</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-danger" href="{% url 'logout' %}">Log Out</a>
+        </li>
+    </ul>
 
     <div class="row">
         <div class="col-md-4">
-            <div id="email-previews-block">
+            <div id="email-previews">
             </div>
         </div>
         <div class="col-md-8">
@@ -24,35 +35,34 @@
 
     <div id="compose-view">
         <div class="container mt-4">
-    <h3 class="mb-3 text-white">New Email</h3>
-    <form id="compose-form">
-        <div class="form-group mb-3">
-            <label for="compose-from" class="form-label text-white">From:</label>
-            <input id="compose-from" type="text" class="form-control" disabled value="{{ request.user.email }}" aria-label="Sender email">
+            <h3 class="mb-3 text-white">New Email</h3>
+            <form id="compose-form">
+                <div class="form-group mb-3">
+                    <label for="compose-from" class="form-label text-white">From:</label>
+                    <input id="compose-from" type="text" class="form-control" disabled value="{{ request.user.email }}" aria-label="Sender email">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="compose-recipients" class="form-label text-white">To:</label>
+                    <input id="compose-recipients" type="email" class="form-control" placeholder="Recipient's email" aria-label="Recipient email">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="compose-subject" class="form-label text-white">Subject:</label>
+                    <input id="compose-subject" type="text" class="form-control" placeholder="Subject" aria-label="Email subject">
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="compose-body" class="form-label text-white">Body:</label>
+                    <textarea id="compose-body" class="form-control" rows="5" placeholder="Write your message here" aria-label="Email body"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Send</button>
+            </form>
         </div>
-
-        <div class="form-group mb-3">
-            <label for="compose-recipients" class="form-label text-white">To:</label>
-            <input id="compose-recipients" type="email" class="form-control" placeholder="Recipient's email" aria-label="Recipient email">
-        </div>
-
-        <div class="form-group mb-3">
-            <label for="compose-subject" class="form-label text-white">Subject:</label>
-            <input id="compose-subject" type="text" class="form-control" placeholder="Subject" aria-label="Email subject">
-        </div>
-
-        <div class="form-group mb-4">
-            <label for="compose-body" class="form-label text-white">Body:</label>
-            <textarea id="compose-body" class="form-control" rows="5" placeholder="Write your message here" aria-label="Email body"></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">Send</button>
-    </form>
-</div>
-
     </div>
 {% endblock %}
 
 {% block script %}
-    <script src="{% static 'mail/inbox.js' %}?v={{ timestamp }}"></script>
+    <script src="{% static 'mail/inbox.js' %}?v={{ timestamp }}" defer></script>
 {% endblock %}
