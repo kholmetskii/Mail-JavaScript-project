@@ -172,9 +172,14 @@ function view_email(email_id) {
 
         newEmail.innerHTML = `
 
-            <div class='email-head'>
-                <h5>From:<b> ${email.sender}</b></h5>
-                <p>Time of sending: ${email.timestamp}</p>
+            <div class="email-head">
+                <div class="email-head-left">
+                    <h5>From: <b>${email.sender}</b></h5>
+                    <h5>To: <b>${email.recipients}</b></h5>
+                </div>
+                <div class="email-head-right">
+                    <p>Time of sending: ${email.timestamp}</p>
+                </div>
             </div>
             <div class='email-body'>
                 <h6>Subject: <b>${email.subject}</b></h6>

@@ -59,8 +59,7 @@ textarea {
 
 .email-head-right {
     font-size: 0.9em;
-    color: #888; /* Optional: Lighter color for the timestamp */
-    text-align: right; /* Aligns timestamp to the right */
+    text-align: right;
 }
 
 .email-body {
