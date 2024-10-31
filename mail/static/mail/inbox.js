@@ -228,5 +228,22 @@ function archive_email(email) {
 function reply_email(email) {
     setActiveTab('compose');
     compose_email();
+    document.querySelector('#compose-recipients').value = email.sender;
 
+    // Check if the subject already starts with "Re:"
+    if (!email.subject.startsWith("Re:")) {
+        document.querySelector('#compose-subject').value = `Re: ${email.subject}`;
+    } else {
+        document.querySelector('#compose-subject').value = email.subject;
+    }
+    // Format the original email's timestamp
+    const emailDate = new Date(email.timestamp);
+    const formattedDate = emailDate.toLocaleString('en-US', {
+        year: 'numeric', month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+    });
+
+    // Pre-fill the body with the original email text
+    const replyLine = `\n\nOn ${formattedDate}, ${email.sender} wrote:\n${email.body}`;
+    document.querySelector('#compose-body').value = replyLine;
 }
