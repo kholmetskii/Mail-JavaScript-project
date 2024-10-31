@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
 function compose_email() {
 
     // Show compose view and hide other views
-    document.querySelector('#emails-view').style.display = 'none';
-    document.querySelector('#email-view').innerHTML = '';
+    document.querySelector('#email-previews-block').style.display = 'none';
+    document.querySelector('#email-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'block';
 
     // Clear out composition fields
@@ -26,15 +26,16 @@ function compose_email() {
     document.querySelector('#compose-body').value = '';
 }
 
+let selectedEmail = null;
 function load_mailbox(mailbox) {
 
     // Show the mailbox and hide other views
-    document.querySelector('#emails-view').style.display = 'block';
-    document.querySelector('#email-view').innerHTML = '';
+    document.querySelector('#email-previews-block').style.display = 'block';
+    document.querySelector('#email-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
 
     // Show the mailbox name
-    document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+    document.querySelector('#email-previews-block').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
     // Get mails
     fetch(`/emails/${mailbox}`)
@@ -48,7 +49,6 @@ function load_mailbox(mailbox) {
             const currentDate = new Date();
 
             let formattedEmailDate;
-
             if (emailDate.toDateString() === currentDate.toDateString()) {
                 // Same day, show time
                 formattedEmailDate = emailDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -59,21 +59,42 @@ function load_mailbox(mailbox) {
 
             // Construct the email item content
             newEmail.innerHTML = `
-                <div style="border-bottom: 1px solid #ddd;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h5 style="margin: 0;"><b>${singleEmail.sender}</b></h5>
-                        <p style="margin: 0;">${formattedEmailDate}</p>
+                <div class="email-preview">
+                    <div style="flex-grow: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h5><b>${singleEmail.sender}</b></h5>
+                            <p>${formattedEmailDate}</p>
+                        </div>
+                        <h6><b>${singleEmail.subject}</b></h6>
+                        <p class="email-body-preview">${singleEmail.body}</p>
                     </div>
-                    <h6><b>${singleEmail.subject}</b></h6>
-                    <h6 class="email-body-preview">${singleEmail.body}</h6>
                 </div>
             `;
 
+            // Get reference to the email-preview element inside newEmail
+            const emailPreview = newEmail.querySelector('.email-preview');
+
+            // Set background color for unread emails
+            if (!singleEmail.read) {
+                emailPreview.style.backgroundColor = '#505050';
+            }
+
             // Add event listener using a separate function
-            newEmail.addEventListener('click', () => view_email(singleEmail.id));
+            newEmail.addEventListener('click', () => {
+                // Reset the background color of the previously selected email
+                if (selectedEmail) {
+                    selectedEmail.style.backgroundColor = ''; // Reset previous color
+                }
+                // Set new background color for the selected email-preview
+                emailPreview.style.backgroundColor = '#007bff';
+                selectedEmail = emailPreview; // Update the selected email variable
+
+                // Open the email and mark it as read
+                view_email(singleEmail.id);
+            });
 
             // Append email to the emails-view container
-            document.querySelector('#emails-view').append(newEmail);
+            document.querySelector('#email-previews-block').append(newEmail);
         });
 
         console.log(emails);
@@ -111,7 +132,12 @@ function view_email(email_id) {
     document.querySelector('#email-view').innerHTML = '';
     document.querySelector('#email-view').innerHTML = `<h3>Mail</h3>`;
 
-
+    fetch(`/emails/${email_id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            read: true
+        })
+    })
     fetch(`/emails/${email_id}`)
     .then(response => response.json())
     .then(email => {
@@ -122,12 +148,14 @@ function view_email(email_id) {
 
         newEmail.innerHTML = `
             <div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h5 style="margin: 0;"><b>${email.sender}</b></h5>
-                    <p style="margin: 0;">${email.timestamp}</p>
+                <div class='email-head'>
+                    <h5>From:<b> ${email.sender}</b></h5>
+                    <p>Time of sending: ${email.timestamp}</p>
                 </div>
-                <h6><b>${email.subject}</b></h6>
-                <h6>${formattedBody}</h6>
+                <div class='email-body'>
+                    <h6>Subject: <b>${email.subject}</b></h6>
+                    <h6>${formattedBody}</h6>
+                </div>
             </div>
         `;
 

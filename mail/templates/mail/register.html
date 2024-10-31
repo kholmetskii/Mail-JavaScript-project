@@ -8,19 +8,28 @@
         <div>{{ message }}</div>
     {% endif %}
 
-    <form action="{% url 'register' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <input class="form-control" type="email" name="email" placeholder="Email Address">
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="password" placeholder="Password">
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
-        </div>
-        <input class="btn btn-primary" type="submit" value="Register">
-    </form>
+    <div class="register-form-container">
+        <form action="{% url 'register' %}" method="post">
+            {% csrf_token %}
+
+            <div class="form-group mb-3">
+                <label for="register-email" class="form-label text-white">Email Address:</label>
+                <input id="register-email" class="form-control" type="email" name="email" placeholder="Email Address">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="register-password" class="form-label text-white">Password:</label>
+                <input id="register-password" class="form-control" type="password" name="password" placeholder="Password">
+            </div>
+
+            <div class="form-group mb-4">
+                <label for="register-confirmation" class="form-label text-white">Confirm Password:</label>
+                <input id="register-confirmation" class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
+            </div>
+
+            <input class="btn btn-primary" type="submit" value="Register">
+        </form>
+    </div>
 
     Already have an account? <a href="{% url 'login' %}">Log In here.</a>
 
