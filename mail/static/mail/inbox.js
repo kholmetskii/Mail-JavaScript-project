@@ -203,6 +203,10 @@ function view_email(email_id) {
         document.querySelector('#archive-button').addEventListener('click', () => {
             archive_email(email);
         });
+
+        document.querySelector('#reply-button').addEventListener('click', () => {
+            reply_email(email);
+        });
     });
 }
 
@@ -219,4 +223,10 @@ function archive_email(email) {
         setActiveTab(email.archived ? 'inbox' : 'archived');
         load_mailbox(email.archived ? 'inbox' : 'archive');
     });
+}
+
+function reply_email(email) {
+    setActiveTab('compose');
+    compose_email();
+
 }
