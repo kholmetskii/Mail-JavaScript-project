@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block body %}
-    <h2>{{ request.user.email }}</h2>
+
 
     <ul class="nav nav-tabs">
         <li class="nav-item">
@@ -17,9 +17,10 @@
         <li class="nav-item">
             <a class="nav-link" id="archived-tab" href="#">Archived</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link text-danger" href="{% url 'logout' %}">Log Out</a>
-        </li>
+        <div class="d-flex align-items-center ml-auto" style="margin-left: auto;">
+            <div class="mb-0 mr-3">{{ request.user.email }}</div>
+            <a href="{% url 'logout' %}" style="color: #DC3545; text-decoration: none; margin-left: 5px;">Log Out</a>
+        </div>
     </ul>
 
     <div class="row">

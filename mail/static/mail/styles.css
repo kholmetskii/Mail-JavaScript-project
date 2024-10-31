@@ -5,6 +5,11 @@ textarea {
 body {
     background-color: #333;
     color: #fff;
+    margin-top: 20px;
+}
+
+textarea {
+    resize: none; 
 }
 
 .top-panel {
@@ -60,6 +65,10 @@ body {
 
 .email-body {
     margin-top: 10px;
+}
+
+.dangerous {
+    color: red;
 }
 
 #compose-form .form-control {
